@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Perfume</string>
+    <string name="title_items">Items</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="open_link">Open Link</string>
+    <string name="icon_to_favorite">Favorite Icon</string>
+    <string name="icon_to_buy">To Buy Icon</string>
+</resources>
