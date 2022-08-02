@@ -1,10 +1,14 @@
 package me.dio.perfume.ui.adapter;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -33,6 +37,14 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         Items items = this.items.get(position);
         holder.binding.tvTitle.setText(items.getTitle());
         holder.binding.tvDescription.setText(items.getDescription());
+        Picasso.get().load(items.getImage())
+                .into(holder.binding.ivThumbnail);
+        holder.binding.btOpenLink.setOnClickListener(view -> {
+            String url = "http://www.example.com";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(items.getLink()));
+            holder.itemView.getContext().startActivity(i);
+        });
 
     }
 

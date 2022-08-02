@@ -1,5 +1,7 @@
 package me.dio.perfume.ui.items;
 
+import android.widget.Toast;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,23 +9,48 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.dio.perfume.data.remote.PerfumeApi;
+import me.dio.perfume.databinding.PerfumeitemsBinding;
 import me.dio.perfume.domain.Items;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ItemsViewModel extends ViewModel {
 
-    private final MutableLiveData<List<Items>> items;
+    private final MutableLiveData<List<Items>> items = new MutableLiveData<>();
+    private final PerfumeApi api;
 
     public ItemsViewModel() {
-        this.items = new MutableLiveData<>();
 
-        //TODO remover mock de perfumes
-        List<Items> items = new ArrayList<>();
-        items.add(new Items("212", "Top notes are Orange Blossom, Cactus Flower, Bergamot and Mandarin Orange; middle notes are Lily, Freesia, Gardenia, Jasmine, White Camelia, Lily-of-the-Valley, Rose and Peony; base notes are Musk and Sandalwood."));
-        items.add(new Items("Calvin Klein Be", "It is a subtle blend of musk, lavender, peach, and citrus provided by the bergamot."));
-        items.add(new Items("Carolina Herrera", "CH Carolina Herrera opens with notes of bergamot, grapefruit and lemon, leading into a rose, jasmine heart with orange blossom. A lingering praline and patchouli base with a hint of soft, woody undertones make for an unmistakably feminine scent."));
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://ddoniela.github.io/Perfumes-API/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        this.items.setValue(items);
+        api = retrofit.create(PerfumeApi.class);
+        this.findItems();
+    }
 
+    private void findItems() {
+        api.getItems().enqueue(new Callback<List<Items>>() {
+            @Override
+            public void onResponse(Call<List<Items>> call, Response<List<Items>> response) {
+                if (response.isSuccessful()){
+                    items.setValue(response.body());
+                } else {
+                    //TODO pensar em estratégia de erros.
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Items>> call, Throwable t) {
+                //TODO pensar em estratégia de erros.
+
+            }
+        });
     }
 
     public LiveData<List<Items>> getItems() {
